@@ -7,5 +7,7 @@ My OC Computer
 [Image Renderer](/home/finished/imgrender1.lua) - /home/finished/imgrender1.lua
 
 [Unfinished programs](/home/projects):
+
 Snake
+
 Astar pathfinding
