@@ -1,0 +1,101 @@
+local comp = require("component")
+local gpu = comp.gpu
+require("term").clear()
+local function cls()
+  gpu.setBackground(0x000000)
+  gpu.fill(0,0,80,50," ")
+end
+local function pixel(x,y,b)
+  gpu.setBackground(b)
+  gpu.set(x,y," ")
+  gpu.setBackground(0x000000)
+end
+local function p(x,y) pixel(x,y,0x00FFFF) end
+local function rndb(ch) ch=ch or 0 return math.floor(math.random()+0.5+ch) end
+local function rndi(m) return math.ceil(math.random()*(10^m)) end
+local function genarr(x,y,def)
+  local arr = {}
+  for i=1,x,1 do
+    arr[i]={}
+    for j=1,y,1 do
+      arr[i][j]=def
+    end
+  end
+ return arr
+end
+local w = 10
+local h = 10
+map = map or {{0,0,0,0,0,0,0,0,0,0},{0,0,0,1,1,1,0,0,0,0},{1,0,1,1,0,1,1,0,0,1},{1,0,0,1,0,0,0,0,0,0},{0,0,0,1,1,1,1,1,1,1},{0,0,0,0,0,0,0,0,0,0},{0,1,0,1,0,1,0,1,0,1},{0,0,0,0,0,0,0,0,0,0},{1,0,1,0,1,0,1,0,1,0},{0,0,0,0,0,0,0,0,0,0}}
+
+local function frame()
+  gpu.fill(1,1,12,1,"-")
+  gpu.fill(1,12,12,1,"-")
+  gpu.fill(1,1,1,12,"|")
+  gpu.fill(12,1,1,12,"|")
+end
+
+frame()
+for i=1,w,1 do
+  for j=1,h,1 do
+    if map[i][j]==1 then p(j+1,i+1) end
+  end
+end
+
+dist = genarr(w,h,math.huge)
+
+dist[5][1] = 0
+local t = 0
+repeat
+  t=t+1
+  for i=1,w,1 do
+    for j=1,h,1 do
+      if i<w and map[j][i+1]==0 and dist[i][j] < dist[i+1][j] then dist[i+1][j]=dist[i][j]+1 end
+      if i>1 and map[j][i-1]==0 and dist[i][j] < dist[i-1][j] then dist[i-1][j]=dist[i][j]+1 end
+      if j<h and map[j+1][i]==0 and dist[i][j] < dist[i][j+1] then dist[i][j+1]=dist[i][j]+1 end
+      if j>1 and map[j-1][i]==0 and dist[i][j] < dist[i][j-1] then dist[i][j-1]=dist[i][j]+1 end
+    end
+  end
+  for i=1,w-1,1 do
+    i=w-i
+    for j=1,h,1 do
+      if i<w and map[j][i+1]==0 and dist[i][j] < dist[i+1][j] then dist[i+1][j]=dist[i][j]+1 end
+      if i>1 and map[j][i-1]==0 and dist[i][j] < dist[i-1][j] then dist[i-1][j]=dist[i][j]+1 end
+      if j<h and map[j+1][i]==0 and dist[i][j] < dist[i][j+1] then dist[i][j+1]=dist[i][j]+1 end
+      if j>1 and map[j-1][i]==0 and dist[i][j] < dist[i][j-1] then dist[i][j-1]=dist[i][j]+1 end
+    end
+    i=w-i
+  end
+  for i=1,w,1 do
+    for j=1,h,1 do
+      if map[j][i]==1 then gpu.setBackground(0x00BB00) gpu.set((i*1)+1,j+1,tostring(dist[i][j])) end
+      if map[j][i]==0 then gpu.setBackground(0xBB0000) gpu.set((i*1)+1,j+1,tostring(dist[i][j])) end
+    end
+  end
+until t>(w+h)
+
+cls()
+frame()
+for i=1,w,1 do
+  for j=1,h,1 do
+    if map[i][j]==1 then p(j+1,i+1) end
+    if map[i][j]==0 then gpu.setBackground(0x000000) gpu.set(j+1,i+1," ") end
+  end
+end
+--TODO: old,oldd doesn't work, --TODO: refactor
+local old = 1
+local oldd = math.huge
+for j=0,h-1,1 do
+  gpu.setBackground(0xCCCC00)
+  j=h-j
+  local low = 1
+  for i=1,w,1 do
+    if dist[i][j] < dist[low][j] then low = i end
+  end
+  if dist[low][j] < oldd-1 then gpu.set(low+1,j+1," ") end
+  gpu.set(low+1,j+1," ")
+  old = low
+  oldd = dist[old][j]
+  j=h-j
+end
+
+os.sleep(5)

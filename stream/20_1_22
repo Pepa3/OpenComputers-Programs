@@ -1,0 +1,11 @@
+local set = require("component").gpu.set
+a=false
+local reactorheat = function()
+ if a then a=false return 1 else a=true return 2 end
+end
+
+x,y,b,t = 1,1,reactorheat,0.5
+while true do
+ set(x,y,tostring(b()))
+ os.sleep(t)
+end

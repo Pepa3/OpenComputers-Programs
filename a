@@ -1,0 +1,46 @@
+_G.__logged = {}
+_G.__logdex = 0
+setmetatable(_G,{__index=function(a,b) __logged[__logdex]="GET "..tostring(b) __logdex=__logdex+1 return rawget(a,b) end,__newindex=function(a,b,c,d) __logged[__logdex]="NEW "..tostring(b) __logdex=__logdex+1 return rawset(a,b,c,d) end})
+
+local computer = computer
+local invoke = component.invoke
+local addr = computer.getBootAddress()
+
+function os.sleep(timeout)
+  checkArg(1, timeout, "number", "nil")
+  local deadline = computer.uptime() + (timeout or 0)
+  repeat
+    local a = table.pack(computer.pullSignal(deadline - computer.uptime()))
+    if (a and (not (type(a)=="table") or (type(a)=="table" and #a>=1)) or type(a)=="boolean") then
+      computer.pushSignal(table.unpack(a))
+    end
+  until computer.uptime() >= deadline
+end
+
+function os.exit(reboot)
+  checkArg(1, reboot, "boolean", "nil")
+  reboot = reboot or false
+  computer.pushSignal("shutdown")
+  os.sleep(0.1)
+  computer.shutdown(reboot)
+end
+
+local function loadfile(file)
+  local handle = assert(invoke(addr, "open", file))
+  local buffer = ""
+  repeat
+    local data = invoke(addr, "read", handle, math.huge)
+    buffer = buffer .. (data or "")
+  until not data
+  invoke(addr, "close", handle)
+  return load(buffer, file, "bt", _G)
+end
+
+loadfile("kernel/boot.lua")(loadfile)
+os.sleep(30)
+out = ""
+for index, data in ipairs(__logged) do
+    out = out.."\n"..tostring(data)
+end
+error(out)
+os.exit(false)
