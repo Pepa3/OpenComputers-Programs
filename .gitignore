@@ -1,5 +1,1 @@
-bin/*
-etc/*
-lib/*
-boot/*
-usr/*
+*.i
