@@ -1,0 +1,1 @@
+function "abc" print 1 sleep 69 return end :call: 1 call print goto:call
