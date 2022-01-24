@@ -1,1 +1,1 @@
-function "abc" print 1 sleep 69 return end :call: 1 call print goto:call
+:label: 1 sleep 1 1 == "loop" print ifgoto:label "end" print
