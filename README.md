@@ -13,3 +13,5 @@ Custom OS in [/kernel](/kernel) (WIP). Yout must switch [init.lua](init.lua) wit
 Snake
 
 Astar pathfinding
+
+[Stack Based Programming Language](/lang/):/lang
