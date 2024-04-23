@@ -1,7 +1,7 @@
 # OpenComputers-Programs
 My OC Computer
 
-Custom OS in [/kernel](/kernel) (WIP). Yout must switch [init.lua](init.lua) with [a](a)
+Custom OS in [/kernel](/stream/kernel) (WIP). Yout must switch [init.lua](init.lua) with [a](a)
 
 
 [Image Editor](/home/finished/imgedit3.lua) - /home/finished/imgedit3.lua
@@ -14,4 +14,4 @@ Snake
 
 Astar pathfinding
 
-[Stack Based Programming Language](/lang/):/lang
+[Stack Based Programming Language](/stream/lang):/lang
