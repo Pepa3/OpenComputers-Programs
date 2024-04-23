@@ -14,4 +14,4 @@ Snake
 
 Astar pathfinding
 
-[Stack Based Programming Language](/stream/lang):/lang
+[Stack Based Programming Language](/stream/lang)
