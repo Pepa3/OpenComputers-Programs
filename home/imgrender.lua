@@ -30,4 +30,6 @@ for i=1,width,1 do
     gpu.set(i,j+1," ")
   end
 end
-os.sleep(1)
+while true do
+  os.sleep(1)
+end
