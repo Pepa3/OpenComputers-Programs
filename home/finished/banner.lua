@@ -1,9 +1,11 @@
 local shell = require("shell")
 local term = require("term")
 local component = require("component")
-local gpu = component.gpu
 local event = require("event")
 local io = require("io")
+local gpu = term.gpu()
+
+if _ENV.screen then gpu.bind(_ENV.screen) end
 
 if not utf8 or not utf8.offset then error("Requires Lua > 5.3") end
 
@@ -56,5 +58,5 @@ for i=0,j do
   gpu.set(hresX-utf8.len(arr[i])/2+1,hresY-(j/2)+i+1,arr[i])
 end
 
-_,_,_,_,_=event.pull("key_down")
-exit()
+--_,_,_,_,_=event.pull("key_down")
+--exit()

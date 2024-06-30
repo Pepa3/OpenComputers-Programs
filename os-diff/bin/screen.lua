@@ -1,6 +1,6 @@
 local component = require("component")
 local gpu = component.gpu
-local tty = require("tty")
+local term = require("term")
 local shell = require("shell")
 local event = require("event")
 local args, ops = shell.parse(...)
@@ -11,7 +11,7 @@ local filesystem = require("filesystem")
 -- $screen 1 --primary -> set as primary screen
 
 if #args == 0 then
-  print("Usage: screen [index] [--primary]")
+  print("Usage: screen [index] [--primary] [--run='echo abc']")
   print("Available screens:")
   local i = 1
   for k,v in pairs(component.list("screen")) do
@@ -28,12 +28,12 @@ elseif #args == 1 then
     i=i+1
   end
   if name==""  then error("Invalid screen index") end
-  tty.clear()
+  term.clear()
   component.setPrimary("screen",name)
   os.sleep(0.1)
   gpu.bind(name)
   local key = component.proxy(name).getKeyboards()[1]
-  tty.clear()
+  term.clear()
   component.setPrimary("keyboard",key)
   os.sleep(0.1)
   if ops["primary"] then
@@ -49,5 +49,11 @@ elseif #args == 1 then
       handle:write(data)
       handle:close()
     end
+  elseif ops["run"] then
+    local cmd = ops["run"]
+    local env = {screen=name,mt={__index = function(t,k) return _G[k] end}}
+    setmetatable(env,env.mt)
+    local a,b,c = shell.execute(cmd,env)
+    term.gpu().bind(_SCREEN_PRIMARY)
   end
 end
